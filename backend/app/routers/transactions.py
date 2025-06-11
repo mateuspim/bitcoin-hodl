@@ -6,6 +6,7 @@ from app.models import Transaction
 from app.schemas import TransactionCreate, TransactionRead, TransactionSummary
 from app.auth.users import current_active_user
 from app.models import User
+from decimal import Decimal
 
 router = APIRouter(
     prefix="/transactions",
@@ -38,7 +39,7 @@ async def list_transactions_summary(
     row = result.first()
     return TransactionSummary(
         total_usd_spent=row.total_usd_spent, # type: ignore
-        total_btc_bought=row.total_btc_bought, # type: ignore
+        total_btc_bought=Decimal(row.total_btc_bought) / Decimal("100000000"), # type: ignore
         avg_btc_price=row.avg_btc_price # type: ignore
     )
 

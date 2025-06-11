@@ -31,7 +31,7 @@ class TransactionRead(TransactionBase):
         
 class TransactionSummary(BaseModel):
     total_usd_spent: Decimal | None
-    total_btc_bought: int | None  # sum of satoshis
+    total_btc_bought: Decimal | None  # sum of satoshis in BTC
     avg_btc_price: Decimal | None
 
 # User schemas
