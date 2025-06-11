@@ -1,13 +1,14 @@
 from fastapi import APIRouter, HTTPException, Query
 import httpx
 import time
+from app.schemas import BitcoinPriceResponse
 
 router = APIRouter()
 _price_cache = {}  # {currency: (price, timestamp)}
 
 CACHE_SECONDS = 60
 
-@router.get("/bitcoin/price", summary="Get current Bitcoin price")
+@router.get("/bitcoin/price", summary="Get current Bitcoin price", response_model=BitcoinPriceResponse)
 async def get_bitcoin_price(
     currency: str = Query("usd", description="Fiat currency code, e.g. usd, eur, brl")
 ):
@@ -16,7 +17,7 @@ async def get_bitcoin_price(
     if curr:
         price, ts = curr
         if now - ts < CACHE_SECONDS:
-            return {"currency": currency, "price": price, "cached": True}
+            return BitcoinPriceResponse(currency=currency, price=price, cached=True)
 
     url = f"https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies={currency.lower()}"
     async with httpx.AsyncClient() as client:
@@ -29,4 +30,4 @@ async def get_bitcoin_price(
         raise HTTPException(status_code=502, detail="Invalid response from CoinGecko")
     
     _price_cache[currency] = (price, now)
-    return {"currency": currency.lower(), "price": price}
+    return BitcoinPriceResponse(currency=currency, price=price, cached=False)

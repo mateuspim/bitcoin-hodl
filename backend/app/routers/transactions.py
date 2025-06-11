@@ -37,9 +37,9 @@ async def list_transactions_summary(
     )
     row = result.first()
     return TransactionSummary(
-        total_usd_spent=row.total_usd_spent,
-        total_btc_bought=row.total_btc_bought,
-        avg_btc_price=row.avg_btc_price
+        total_usd_spent=row.total_usd_spent, # type: ignore
+        total_btc_bought=row.total_btc_bought, # type: ignore
+        avg_btc_price=row.avg_btc_price # type: ignore
     )
 
 @router.post("/", response_model=TransactionRead)

@@ -6,6 +6,7 @@ from fastapi_users import schemas
 import uuid
 from uuid import UUID as UUIDType
 
+# Transaction Schemas
 class TransactionBase(BaseModel):
     date: date
     usd_spent: Decimal
@@ -17,7 +18,7 @@ class TransactionCreate(TransactionBase):
 
 class TransactionRead(TransactionBase):
     id: int
-    btc_bought: Decimal
+    btc_bought: Decimal # type: ignore
 
     @classmethod
     def from_orm(cls, obj):
@@ -33,6 +34,7 @@ class TransactionSummary(BaseModel):
     total_btc_bought: int | None  # sum of satoshis
     avg_btc_price: Decimal | None
 
+# User schemas
 class UserRead(schemas.BaseUser[uuid.UUID]):
     username: str
 
@@ -43,3 +45,8 @@ class UserCreate(schemas.BaseUserCreate):
 class UserUpdate(schemas.BaseUserUpdate):
     pass
 
+# Bitcoin Schemas
+class BitcoinPriceResponse(BaseModel):
+    currency: str
+    price: Decimal
+    cached: bool = False  # Optional, default to False
