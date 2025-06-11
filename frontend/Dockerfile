@@ -7,4 +7,7 @@ RUN npm install
 
 COPY . .
 
+# Build the app
+RUN npm run build
+
 CMD ["npm", "run", "dev", "--", "--host"]
