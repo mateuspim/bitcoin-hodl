@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # Import your database models and routers here as you build them
 # from . import models
-from app.routers import users, transactions
+from app.routers import users, transactions, bitcoin
 from app.database import engine, Base, User, create_db_and_tables
 from app.auth.users import current_active_user
 
@@ -43,3 +43,4 @@ async def root():
 
 app.include_router(users.router)
 app.include_router(transactions.router)
+app.include_router(bitcoin.router)
