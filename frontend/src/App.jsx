@@ -121,7 +121,7 @@ function App() {
         </div>
       )}
       {error && <div style={{color: "red"}}>{error}</div>}
-      <TransactionsTable transactions={transactions} transactionsSummary={transactionsSummary} currency={currency} bitcoinPrice={bitcoinPrice} />
+      <TransactionsTable transactions={transactions} transactionsSummary={transactionsSummary} fetchTransactions={fetchTransactions} currency={currency} bitcoinPrice={bitcoinPrice} />
     </div>
   );
 }

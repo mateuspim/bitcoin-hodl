@@ -12,9 +12,11 @@ import Button from "@mui/material/Button";
 function TransactionsTable({
   transactions,
   transactionsSummary,
+  fetchTransactions,
   currency,
   bitcoinPrice,
 }) {
+  const [selectedIds, setSelectedIds] = React.useState([]);
   const columns = [
     { field: "date", headerName: "Date", flex: 1 },
     {
@@ -135,11 +137,57 @@ function TransactionsTable({
           <GridToolbarFilterButton sx={{ color: "#f7931a" }} />
           <GridToolbarDensitySelector sx={{ color: "#f7931a" }} />
           <GridToolbarExport sx={{ color: "#f7931a" }} />
+          <Button
+            variant="contained"
+            color="error"
+            disabled={selectedIds.length === 0 || deleting}
+            onClick={handleDelete}
+          >
+            {deleting ? "Deleting..." : "Delete Selected"}
+          </Button>
         </div>
       </GridToolbarContainer>
     );
   }
 
+  const [deleting, setDeleting] = React.useState(false);
+  const handleDelete = async () => {
+    if (selectedIds.length === 0) return;
+    setDeleting(true);
+
+    // Optimistically remove from UI (optional, if you want instant feedback)
+    // setTransactions((prev) => prev.filter(tx => !selectedIds.includes(tx.id)));
+
+    try {
+      // Delete all selected in parallel
+      await Promise.all(
+        selectedIds.map((id) =>
+          fetch(`http://localhost:8000/transactions/${id}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          })
+        )
+      );
+      // Refresh data from server to ensure consistency
+      await fetchTransactions();
+      setSelectedIds([]);
+    } catch (error) {
+      alert("Failed to delete one or more transactions.");
+      console.error(error);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handleSelectionChange = (selection) => {
+    if (selection && selection.ids) {
+      setSelectedIds(Array.from(selection.ids));
+    } else if (Array.isArray(selection)) {
+      setSelectedIds(selection);
+    }
+  };
   return (
     <div style={{ width: "100%" }}>
       {/* Summary Bar */}
@@ -184,7 +232,10 @@ function TransactionsTable({
         autoHeight
         rows={rows}
         columns={columns}
-        pageSize={5}
+        checkboxSelection
+        // rowSelectionModel={selectedIds}
+        onRowSelectionModelChange={handleSelectionChange}
+        eSize={5}
         rowsPerPageOptions={[5, 10, 25]}
         disableSelectionOnClick
         rowHeight={60}
