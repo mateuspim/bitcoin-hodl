@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import {
   DataGrid,
   GridToolbarContainer,
@@ -7,7 +7,14 @@ import {
   GridToolbarFilterButton,
   GridToolbarDensitySelector,
 } from "@mui/x-data-grid";
-import Button from "@mui/material/Button";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Button,
+} from "@mui/material";
 
 function TransactionsTable({
   transactions,
@@ -16,7 +23,6 @@ function TransactionsTable({
   currency,
   bitcoinPrice,
 }) {
-  const [selectedIds, setSelectedIds] = React.useState([]);
   const columns = [
     { field: "date", headerName: "Date", flex: 1 },
     {
@@ -149,8 +155,9 @@ function TransactionsTable({
       </GridToolbarContainer>
     );
   }
-
+  const [selectedIds, setSelectedIds] = React.useState([]);
   const [deleting, setDeleting] = React.useState(false);
+
   const handleDelete = async () => {
     if (selectedIds.length === 0) return;
     setDeleting(true);
@@ -188,8 +195,144 @@ function TransactionsTable({
       setSelectedIds(selection);
     }
   };
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState({
+    date: "",
+    usd_spent: "",
+    btc_price: "",
+    btc_bought: "",
+  });
+
+  const btcBought =
+    form.usd_spent && form.btc_price
+      ? (parseFloat(form.usd_spent) / parseFloat(form.btc_price)).toFixed(8)
+      : "";
+  const handleOpen = () => {
+    setForm({
+      date: "",
+      usd_spent: "",
+      btc_price: bitcoinPrice || "",
+      btc_bought: "",
+    });
+    setOpen(true);
+  };
+  const handleClose = () => setOpen(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    const updatedForm = { ...form, [name]: value };
+
+    if (name === "usd_spent" || name === "btc_price") {
+      const usd_spent = name === "usd_spent" ? value : updatedForm.usd_spent;
+      const btc_price = name === "btc_price" ? value : updatedForm.btc_price;
+      updatedForm.btc_bought =
+        usd_spent && btc_price
+          ? (parseFloat(usd_spent) / parseFloat(btc_price)).toFixed(8)
+          : "";
+    }
+
+    setForm(updatedForm);
+  };
+  // Submit new transaction
+  const handleSubmit = async () => {
+    // Convert btc_bought to satoshis (integer)
+    const btc_bought_sats = Math.round(
+      parseFloat(form.btc_bought) * 100_000_000
+    );
+
+    const payload = {
+      date: form.date,
+      usd_spent: parseFloat(form.usd_spent),
+      btc_price: parseFloat(form.btc_price),
+      btc_bought: btc_bought_sats, // send as integer
+    };
+
+    try {
+      const res = await fetch("http://localhost:8000/transactions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        alert("Failed to create transaction: " + JSON.stringify(errorData));
+        return;
+      }
+
+      await fetchTransactions();
+      setOpen(false);
+      setForm({
+        date: "",
+        usd_spent: "",
+        btc_price: bitcoinPrice || "",
+        btc_bought: "",
+      });
+    } catch (error) {
+      alert("Failed to create transaction.");
+      console.error(error);
+    }
+  };
+
   return (
     <div style={{ width: "100%" }}>
+      {/* Add Transaction Button */}
+      <Button variant="contained" color="primary" onClick={handleOpen}>
+        Create Transaction
+      </Button>
+
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Create New Transaction</DialogTitle>
+        <DialogContent>
+          <TextField
+            margin="dense"
+            label="Date"
+            name="date"
+            type="date"
+            value={form.date}
+            onChange={handleChange}
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+          />
+          <TextField
+            margin="dense"
+            label="USD Spent"
+            name="usd_spent"
+            type="number"
+            value={form.usd_spent}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            margin="dense"
+            label="BTC Price"
+            name="btc_price"
+            type="number"
+            value={form.btc_price}
+            onChange={handleChange}
+            fullWidth
+          />
+          <TextField
+            margin="dense"
+            label="BTC Bought"
+            name="btc_bought"
+            type="number"
+            value={form.btc_bought}
+            onChange={handleChange}
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleSubmit} variant="contained" color="primary">
+            Create
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       {/* Summary Bar */}
       <div
         style={{
