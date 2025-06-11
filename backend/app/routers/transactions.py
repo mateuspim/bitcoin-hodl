@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_async_session  # adjust import as needed
@@ -37,6 +37,12 @@ async def list_transactions_summary(
         ).where(Transaction.user_id == user.id)
     )
     row = result.first()
+    if not row or row.total_usd_spent is None or row.total_btc_bought is None:
+        return TransactionSummary(
+            total_usd_spent=Decimal("0.00"),
+            total_btc_bought=Decimal("0.00"),
+            avg_btc_price=Decimal("0.00")
+        )
     return TransactionSummary(
         total_usd_spent=row.total_usd_spent, # type: ignore
         total_btc_bought=Decimal(row.total_btc_bought) / Decimal("100000000"), # type: ignore
@@ -53,4 +59,23 @@ async def create_transaction(
     session.add(transaction)
     await session.commit()
     await session.refresh(transaction)
+    return transaction
+
+@router.delete("/{transaction_id}", response_model=TransactionRead)
+async def delete_transaction(
+    transaction_id: int,
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_active_user),
+):
+    result = await session.execute(
+        select(Transaction).filter(
+            Transaction.id == transaction_id,
+            Transaction.user_id == user.id
+        )
+    )
+    transaction = result.scalars().first()
+    if not transaction:
+        raise HTTPException(status_code=404, detail="Transaction not found")
+    await session.delete(transaction)
+    await session.commit()
     return transaction
