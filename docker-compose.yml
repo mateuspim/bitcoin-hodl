@@ -1,15 +1,15 @@
 services:
-  # backend:
-  #   build: ./backend
-  #   container_name: bitcoin-backend
-  #   ports:
-  #     - "8000:80" 
-  #   env_file:
-  #     - ./backend/.env
-  #   depends_on:
-  #     - db
-  #   networks:
-  #     - bitcoin-net
+  backend:
+    build: ./backend
+    container_name: bitcoin-backend
+    ports:
+      - "8000:80" 
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - db
+    networks:
+      - bitcoin-net
 
   frontend:
     build: ./frontend
