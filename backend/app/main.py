@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # Import your database models and routers here as you build them
 # from . import models
-from app.routers import users
+from app.routers import users, transactions
 from app.database import engine, Base, User, create_db_and_tables
 from app.auth.users import current_active_user
 
@@ -41,10 +41,5 @@ app.add_middleware(
 async def root():
     return {"message": "Bitcoin Tracker API is running!"}
 
-@app.get("/authenticated-route")
-async def authenticated_route(user: User = Depends(current_active_user)):
-    return {"message": f"Hello {user.email}!"}
-
-# Example: include your routers as you build them
 app.include_router(users.router)
-# app.include_router(transactions.router, prefix="/transactions", tags=["transactions"])
+app.include_router(transactions.router)

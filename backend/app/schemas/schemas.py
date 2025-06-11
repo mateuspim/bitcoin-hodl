@@ -16,7 +16,7 @@ class TransactionCreate(TransactionBase):
 
 class TransactionRead(TransactionBase):
     id: int
-    user_id: UUIDType
+    #user_id: UUIDType
 
     class Config:
         orm_mode = True
