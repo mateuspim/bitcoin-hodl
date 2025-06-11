@@ -1,3 +1,4 @@
+from decimal import Decimal
 from pydantic import BaseModel
 from datetime import date
 from typing import Optional, List
@@ -7,24 +8,30 @@ from uuid import UUID as UUIDType
 
 class TransactionBase(BaseModel):
     date: date
-    usd_spent: float
-    btc_price: float
-    btc_bought: float
+    usd_spent: Decimal
+    btc_price: Decimal
+    btc_bought: int  # satoshis
 
 class TransactionCreate(TransactionBase):
     pass
 
 class TransactionRead(TransactionBase):
     id: int
-    #user_id: UUIDType
+    btc_bought: Decimal
 
+    @classmethod
+    def from_orm(cls, obj):
+        data = obj.__dict__.copy()
+        data["btc_bought"] = Decimal(obj.btc_bought) / Decimal("100000000")
+        return cls(**data)
+    
     class Config:
         orm_mode = True
         
 class TransactionSummary(BaseModel):
-    total_usd_spent: float | None
-    total_btc_bought: float | None
-    avg_btc_price: float | None
+    total_usd_spent: Decimal | None
+    total_btc_bought: int | None  # sum of satoshis
+    avg_btc_price: Decimal | None
 
 class UserRead(schemas.BaseUser[uuid.UUID]):
     username: str

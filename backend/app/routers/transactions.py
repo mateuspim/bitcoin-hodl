@@ -20,7 +20,8 @@ async def list_transactions(
     result = await session.execute(
         select(Transaction).where(Transaction.user_id == user.id)
     )
-    return result.scalars().all()
+    transactions = result.scalars().all()
+    return [TransactionRead.from_orm(t) for t in transactions]
 
 @router.get("/summary", response_model=TransactionSummary)
 async def list_transactions_summary(
