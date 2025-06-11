@@ -14,20 +14,8 @@ function App() {
   const [transactions, setTransactions] = useState([]);
   const [transactionsError, setTransactionsError] = useState("");
 
-  async function fetchTransactions() {
-    try {
-      const res = await fetch("http://localhost:8000/transactions/", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("Failed to fetch transactions");
-      const data = await res.json();
-      setTransactions(data);
-    } catch (err) {
-      setTransactionsError("Could not load transactions.");
-    }
-  }
-
-  if (transactionsError) return <div style={{ color: "red" }}>{transactionsError}</div>;
+  const [transactionsSummary, setTransactionsSummary] = useState([]);
+  const [transactionsSummaryError, setTransactionsSummaryError] = useState("");
 
   useEffect(() => {
     if (token) {
@@ -35,6 +23,7 @@ function App() {
       fetchUser();
       getBitcoinPrice();
       fetchTransactions();
+      fetchTransactionsSummary();
     } else {
       localStorage.removeItem("token");
       setUser(null);
@@ -73,6 +62,34 @@ function App() {
     setLoading(false);
   };
 
+  async function fetchTransactions() {
+    try {
+      const res = await fetch("http://localhost:8000/transactions/", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Failed to fetch transactions");
+      const data = await res.json();
+      setTransactions(data);
+    } catch (err) {
+      setTransactionsError("Could not load transactions.");
+    }
+  }
+
+  async function fetchTransactionsSummary(){
+    try {
+      const res = await fetch("http://localhost:8000/transactions/summary", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Failed to fetch transactions summary");
+      const data = await res.json();
+      setTransactionsSummary(data);
+    } catch (err) {
+      setTransactionsSummaryError("Could not load transactions summary.");
+    }
+  };
+
+  if (transactionsError) return <div style={{ color: "red" }}>{transactionsError}</div>;
+
   if (!token) {
     return <Login onLogin={setToken} />;
   }
@@ -104,7 +121,7 @@ function App() {
         </div>
       )}
       {error && <div style={{color: "red"}}>{error}</div>}
-      <TransactionsTable transactions={transactions} currency={currency} bitcoinPrice={bitcoinPrice} />
+      <TransactionsTable transactions={transactions} transactionsSummary={transactionsSummary} currency={currency} bitcoinPrice={bitcoinPrice} />
     </div>
   );
 }

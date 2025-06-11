@@ -9,44 +9,56 @@ import {
 } from "@mui/x-data-grid";
 import Button from "@mui/material/Button";
 
-function TransactionsTable({ transactions, currency, bitcoinPrice }) {
+function TransactionsTable({
+  transactions,
+  transactionsSummary,
+  currency,
+  bitcoinPrice,
+}) {
   const columns = [
     { field: "date", headerName: "Date", flex: 1 },
     {
       field: "usd_spent",
       headerName: "USD Spent",
       flex: 1,
-      valueFormatter: ({ value }) =>
-        !isNaN(Number(value)) ? Number(value).toFixed(2) : "",
-      renderCell: ({ value }) =>
-        !isNaN(Number(value)) ? `$${Number(value).toFixed(2)}` : "",
+      valueGetter: (value) => {
+        if (!value) {
+          return value;
+        }
+        return `$ ${value}`;
+      },
     },
     {
       field: "btc_price",
-      headerName: "BTC Price",
+      headerName: "BTC Price in USD",
       flex: 1,
-      valueFormatter: ({ value }) =>
-        !isNaN(Number(value)) ? Number(value).toFixed(2) : "",
-      renderCell: ({ value }) =>
-        !isNaN(Number(value)) ? `$${Number(value).toFixed(2)}` : "",
+      valueGetter: (value) => {
+        if (!value) {
+          return value;
+        }
+        return `$ ${Number(value).toLocaleString()}`;
+      },
     },
     {
       field: "btc_bought",
       headerName: "BTC Bought",
       flex: 1,
-      valueFormatter: ({ value }) =>
-        !isNaN(Number(value)) ? Number(value).toFixed(8) : "",
-      renderCell: ({ value }) =>
-        !isNaN(Number(value)) ? `₿ ${Number(value).toFixed(8)}` : "",
+      valueGetter: (value) => {
+        if (!value) {
+          return value;
+        }
+        return `₿ ${Number(value).toFixed(8)}`;
+      },
     },
     {
       field: "btc_value_today",
       headerName: "BTC Value Today",
       flex: 1,
-      valueFormatter: ({ value }) =>
-        !isNaN(Number(value)) ? Number(value).toFixed(2) : "",
-      renderCell: ({ value }) =>
-        !isNaN(Number(value)) ? `$${Number(value).toFixed(2)}` : "",
+      valueGetter: (value, row) => {
+        return `${Number(
+          row.btc_bought * bitcoinPrice
+        ).toLocaleString()} ${currency.toUpperCase()}`;
+      },
     },
   ];
 
@@ -54,30 +66,14 @@ function TransactionsTable({ transactions, currency, bitcoinPrice }) {
     ? transactions.map((tx, idx) => ({
         id: tx.id || idx,
         ...tx,
-        btc_value_today:
-          !isNaN(Number(tx.btc_bought)) && !isNaN(Number(bitcoinPrice))
-            ? (Number(tx.btc_bought) * Number(bitcoinPrice)).toFixed(2)
-            : "",
       }))
     : [];
 
   const safeTxs = Array.isArray(transactions) ? transactions : [];
 
-  const sumUsdSpent = safeTxs.reduce(
-    (sum, tx) => sum + (Number(tx.usd_spent) || 0),
-    0
-  );
-
-  const avgBtcPrice =
-    safeTxs.length > 0
-      ? safeTxs.reduce((sum, tx) => sum + (Number(tx.btc_price) || 0), 0) /
-        safeTxs.length
-      : 0;
-
-  const totalBtcBought = safeTxs.reduce(
-    (sum, tx) => sum + (Number(tx.btc_bought) || 0),
-    0
-  );
+  const sumUsdSpent = Number(transactionsSummary?.total_usd_spent ?? 0);
+  const avgBtcPrice = Number(transactionsSummary?.avg_btc_price ?? 0);
+  const totalBtcBought = Number(transactionsSummary?.total_btc_bought ?? 0);
 
   const sumBtcValueToday = safeTxs.reduce(
     (sum, tx) =>
@@ -92,57 +88,57 @@ function TransactionsTable({ transactions, currency, bitcoinPrice }) {
   const gainOrLossPercent =
     sumUsdSpent !== 0 ? (gainOrLoss / sumUsdSpent) * 100 : 0;
 
-function CustomToolbar() {
-  return (
-    <GridToolbarContainer
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        minHeight: 56,
-        position: "relative",
-      }}
-    >
-      {/* Left (empty, for spacing) */}
-      <div style={{ flex: 1 }} />
-
-      {/* Centered image and text */}
-      <div
-        style={{
+  function CustomToolbar() {
+    return (
+      <GridToolbarContainer
+        sx={{
           display: "flex",
           alignItems: "center",
-          position: "absolute",
-          left: "50%",
-          transform: "translateX(-50%)",
+          justifyContent: "space-between",
+          minHeight: 56,
+          position: "relative",
         }}
       >
-        <img
-          src="https://cdn.jsdelivr.net/gh/selfhst/icons/png/bitcoin.png"
-          alt="Bitcoin"
-          style={{ width: 30, height: 30, marginRight: 8 }}
-        />
-        <span
+        {/* Left (empty, for spacing) */}
+        <div style={{ flex: 1 }} />
+
+        {/* Centered image and text */}
+        <div
           style={{
-            color: "#f7931a",
-            fontWeight: "bold",
-            fontSize: 20,
-            whiteSpace: "nowrap",
+            display: "flex",
+            alignItems: "center",
+            position: "absolute",
+            left: "50%",
+            transform: "translateX(-50%)",
           }}
         >
-          Bitcoin Portfolio
-        </span>
-      </div>
+          <img
+            src="https://cdn.jsdelivr.net/gh/selfhst/icons/png/bitcoin.png"
+            alt="Bitcoin"
+            style={{ width: 30, height: 30, marginRight: 8 }}
+          />
+          <span
+            style={{
+              color: "#f7931a",
+              fontWeight: "bold",
+              fontSize: 20,
+              whiteSpace: "nowrap",
+            }}
+          >
+            Bitcoin Portfolio
+          </span>
+        </div>
 
-      {/* Right (toolbar buttons) */}
-      <div style={{ flex: 1, display: "flex", justifyContent: "flex-end" }}>
-        <GridToolbarColumnsButton sx={{ color: "#f7931a" }} />
-        <GridToolbarFilterButton sx={{ color: "#f7931a" }} />
-        <GridToolbarDensitySelector sx={{ color: "#f7931a" }} />
-        <GridToolbarExport sx={{ color: "#f7931a" }} />
-      </div>
-    </GridToolbarContainer>
-  );
-}
+        {/* Right (toolbar buttons) */}
+        <div style={{ flex: 1, display: "flex", justifyContent: "flex-end" }}>
+          <GridToolbarColumnsButton sx={{ color: "#f7931a" }} />
+          <GridToolbarFilterButton sx={{ color: "#f7931a" }} />
+          <GridToolbarDensitySelector sx={{ color: "#f7931a" }} />
+          <GridToolbarExport sx={{ color: "#f7931a" }} />
+        </div>
+      </GridToolbarContainer>
+    );
+  }
 
   return (
     <div style={{ width: "100%" }}>
@@ -160,20 +156,8 @@ function CustomToolbar() {
           marginBottom: 12,
         }}
       >
-        <span>
-          Total USD Spent: $
-          {sumUsdSpent.toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </span>
-        <span>
-          Avg BTC Price: $
-          {avgBtcPrice.toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </span>
+        <span>Total USD Spent: ${sumUsdSpent.toFixed(2)}</span>
+        <span>Avg BTC Price: ${avgBtcPrice.toFixed(2)}</span>
         <span>Total BTC Bought: ₿ {totalBtcBought.toFixed(8)}</span>
         <span>
           Sum of Today's Value: $
