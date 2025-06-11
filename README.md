@@ -1,6 +1,6 @@
 # Bitcoin DCA Tracker
 
-_A modern, multi-user Bitcoin DCA (Dollar Cost Averaging) and HODL tracker. Log your recurring BTC purchases, visualize your DCA performance, and track your portfolio value over time. Built with FastAPI, React, and PostgreSQL._
+_A modern, multi-user Bitcoin DCA (Dollar Cost Averaging) tracker. Log your recurring BTC purchases, visualize your DCA performance, and track your portfolio value over time. Built with FastAPI, React, and PostgreSQL._
 
 ---
 
@@ -72,7 +72,7 @@ _A modern, multi-user Bitcoin DCA (Dollar Cost Averaging) and HODL tracker. Log 
 ## Project Structure
 
 ```
-btc-dca-tracker/
+bitcoin-hodl/
 ├── backend/      # FastAPI app (Python)
 ├── frontend/     # React app (JavaScript)
 ├── docker-compose.yml
@@ -126,7 +126,7 @@ npm run dev
 ## Contributing
 
 Contributions, issues, and feature requests are welcome!
-Feel free to [open an issue](https://github.com/yourusername/btc-dca-tracker/issues) or submit a pull request.
+Feel free to [open an issue](https://github.com/mateuspim/bitcoin-hodl/issues) or submit a pull request.
 
 ---
 
@@ -145,4 +145,4 @@ Feel free to [open an issue](https://github.com/yourusername/btc-dca-tracker/iss
 
 ---
 
-**Happy stacking and tracking! 🚀**
+**Happy HODLING! 🚀**
