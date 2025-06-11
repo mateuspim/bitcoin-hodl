@@ -20,6 +20,11 @@ class TransactionRead(TransactionBase):
 
     class Config:
         orm_mode = True
+        
+class TransactionSummary(BaseModel):
+    total_usd_spent: float | None
+    total_btc_bought: float | None
+    avg_btc_price: float | None
 
 class UserRead(schemas.BaseUser[uuid.UUID]):
     username: str
