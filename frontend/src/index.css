@@ -1,0 +1,11 @@
+/* index.css */
+body {
+  background: "linear-gradient(135deg, #181818 0%, #232526 100%)";
+  min-height: 100vh;
+  margin: 0;
+  font-family: 'Inter', 'Roboto', 'Arial', sans-serif;
+}
+
+#root {
+  min-height: 100vh;
+}

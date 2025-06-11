@@ -267,7 +267,6 @@ function TransactionsTable({
         elevation={4}
         sx={{
           p: 3,
-          background: "#181818",
           borderRadius: 4,
           fontFamily: "'Inter', 'Roboto', 'Arial', sans-serif",
           boxShadow: "0 4px 24px 0 rgba(0,0,0,0.4)",
