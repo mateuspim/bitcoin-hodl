@@ -1,0 +1,43 @@
+# Python
+backend/__pycache__/
+backend/**/*.pyc
+backend/.env
+backend/.pytest_cache/
+backend/.mypy_cache/
+backend/.venv/
+backend/venv/
+backend/.DS_Store
+
+# Node/React
+frontend/node_modules/
+frontend/.env
+frontend/.DS_Store
+frontend/dist/
+frontend/build/
+
+# Docker
+**/pgdata/
+**/postgres-data/
+**/.dbdata/
+**/dbdata/
+**/docker-data/
+
+# System
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Vite/React cache
+frontend/.vite/
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Misc
+.env
+.env.*
