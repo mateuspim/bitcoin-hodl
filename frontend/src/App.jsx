@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import Login from "./Login";
 import Logout from "./Logout";
 import TransactionsTable from "./Transactions";
+import TransactionsGraph from "./TransactionsGraph";
 import {
   Paper,
   Typography,
@@ -95,6 +96,7 @@ function App() {
       if (!res.ok) throw new Error("Failed to fetch transactions");
       const data = await res.json();
       setTransactions(data);
+      setTransactionsError("");
     } catch (err) {
       setTransactionsError("Could not load transactions.");
     }
@@ -108,6 +110,7 @@ function App() {
       if (!res.ok) throw new Error("Failed to fetch transactions summary");
       const data = await res.json();
       setTransactionsSummary(data);
+      setTransactionsSummaryError("");
     } catch (err) {
       setTransactionsSummaryError("Could not load transactions summary.");
     }
@@ -135,8 +138,7 @@ function App() {
       <Box
         sx={{
           minHeight: "100vh",
-          background:
-            "linear-gradient(135deg, #181818 0%, #232526 100%)",
+          background: "linear-gradient(135deg, #181818 0%, #232526 100%)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -152,8 +154,7 @@ function App() {
     <Box
       sx={{
         minHeight: "100vh",
-        background:
-          "linear-gradient(135deg, #181818 0%, #232526 100%)",
+        background: "linear-gradient(135deg, #181818 0%, #232526 100%)",
         padding: 4,
       }}
     >
@@ -337,6 +338,7 @@ function App() {
         {/* Tab Panels */}
         <Box hidden={tab !== 0}>
           <TransactionsTable
+            key={tab}
             transactions={transactions}
             transactionsSummary={transactionsSummary}
             fetchTransactions={fetchTransactions}
@@ -345,7 +347,10 @@ function App() {
           />
         </Box>
         <Box hidden={tab !== 1}>
-          {/* Replace this with your actual chart component */}
+          <TransactionsGraph
+            transactions={transactions}
+            currentBitcoinPrice={effectiveBitcoinPrice}
+          />
           <Paper
             elevation={2}
             sx={{
@@ -359,7 +364,7 @@ function App() {
           >
             <ShowChartIcon sx={{ fontSize: 60, color: "#f7931a", mb: 2 }} />
             <Typography variant="h5" sx={{ mb: 2 }}>
-              Graphs Coming Soon!
+              More Graphs Coming Soon!
             </Typography>
             <Typography>
               Here you can visualize your Bitcoin portfolio with interactive
@@ -370,6 +375,8 @@ function App() {
       </Paper>
     </Box>
   );
+
+  // Note: fetchTransactions, fetchTransactionsSummary, fetchUser, getBitcoinPrice, handleLogout are declared above
 }
 
 export default App;

@@ -26,7 +26,6 @@ function TransactionsTable({
   currency,
   bitcoinPrice,
 }) {
-  // All hooks at the top!
   const [selectedIds, setSelectedIds] = useState([]);
   const [deleting, setDeleting] = useState(false);
   const [open, setOpen] = useState(false);
@@ -37,7 +36,6 @@ function TransactionsTable({
     btc_bought: "",
   });
 
-  // Columns definition
   const columns = [
     { field: "date", headerName: "Date", flex: 1 },
     {
@@ -64,13 +62,10 @@ function TransactionsTable({
       headerName: "BTC Value Today",
       flex: 1,
       valueGetter: (value, row) =>
-        `${Number(
-          row.btc_bought * bitcoinPrice
-        ).toLocaleString()} ${currency.toUpperCase()}`,
+        `${Number(row.btc_bought * bitcoinPrice).toLocaleString()} ${currency.toUpperCase()}`,
     },
   ];
 
-  // Prepare rows for DataGrid
   const rows = Array.isArray(transactions)
     ? transactions.map((tx, idx) => ({
         id: tx.id || idx,
@@ -78,7 +73,6 @@ function TransactionsTable({
       }))
     : [];
 
-  // Summary calculations
   const safeTxs = Array.isArray(transactions) ? transactions : [];
   const sumUsdSpent = Number(transactionsSummary?.total_usd_spent ?? 0);
   const avgBtcPrice = Number(transactionsSummary?.avg_btc_price ?? 0);
@@ -97,7 +91,6 @@ function TransactionsTable({
   const gainOrLossPercent =
     sumUsdSpent !== 0 ? (gainOrLoss / sumUsdSpent) * 100 : 0;
 
-  // Custom Toolbar
   function CustomToolbar() {
     return (
       <GridToolbarContainer
@@ -151,7 +144,6 @@ function TransactionsTable({
     );
   }
 
-  // Handlers
   const handleDelete = async () => {
     if (selectedIds.length === 0) return;
     setDeleting(true);
@@ -213,7 +205,6 @@ function TransactionsTable({
   };
 
   const handleSubmit = async () => {
-    // Convert btc_bought to satoshis (integer)
     const btc_bought_sats = Math.round(
       parseFloat(form.btc_bought) * 100_000_000
     );
@@ -222,7 +213,7 @@ function TransactionsTable({
       date: form.date,
       usd_spent: parseFloat(form.usd_spent),
       btc_price: parseFloat(form.btc_price),
-      btc_bought: btc_bought_sats, // send as integer
+      btc_bought: btc_bought_sats,
     };
 
     try {
@@ -274,7 +265,14 @@ function TransactionsTable({
           margin: "0 auto",
         }}
       >
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
           <Typography
             variant="h4"
             sx={{
@@ -360,7 +358,6 @@ function TransactionsTable({
           </DialogActions>
         </Dialog>
 
-        {/* Summary Bar */}
         <Box
           sx={{
             display: "flex",
@@ -398,78 +395,78 @@ function TransactionsTable({
           </span>
         </Box>
 
-        {/* DataGrid */}
-        <DataGrid
-          autoHeight
-          rows={rows}
-          columns={columns}
-          checkboxSelection
-          onRowSelectionModelChange={handleSelectionChange}
-          pageSize={5}
-          rowsPerPageOptions={[5, 10, 25]}
-          disableSelectionOnClick
-          rowHeight={60}
-          slots={{ toolbar: CustomToolbar }}
-          showToolbar
-          sx={{
-            borderRadius: 2,
-            boxShadow: 2,
-            border: "none",
-            backgroundColor: "#181818",
-            color: "#fff",
-            "& .MuiDataGrid-columnHeaders, & .MuiDataGrid-columnHeaderRow, & .MuiDataGrid-columnHeader, & .MuiDataGrid-columnHeaderTitle":
-              {
-                backgroundColor: "#f7931a !important",
-                color: "#fff !important",
-                fontSize: 22,
-                fontWeight: "bold",
-                whiteSpace: "nowrap",
-                overflow: "visible",
-                textOverflow: "unset",
-              },
-            "& .MuiDataGrid-filler": {
-              backgroundColor: "#f7931a",
-              color: "#fff",
-            },
-            "& .MuiDataGrid-row:nth-of-type(even)": {
-              backgroundColor: "#222",
-            },
-            "& .MuiDataGrid-row:hover": {
-              backgroundColor: "#333",
-              transition: "background 0.2s",
-            },
-            "& .MuiDataGrid-cell": {
-              fontSize: 16,
-              color: "#fff",
-            },
-            "& .MuiDataGrid-footerContainer": {
-              backgroundColor: "#f7931a",
-              color: "#181818",
-              borderBottomLeftRadius: 8,
-              borderBottomRightRadius: 8,
-            },
-            "& .MuiDataGrid-toolbarContainer": {
+        <Box sx={{ width: "100%", height: 1500 }}>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            checkboxSelection
+            onRowSelectionModelChange={handleSelectionChange}
+            pageSize={5}
+            rowsPerPageOptions={[5, 10, 25]}
+            disableSelectionOnClick
+            rowHeight={60}
+            slots={{ toolbar: CustomToolbar }}
+            showToolbar
+            sx={{
+              borderRadius: 2,
+              boxShadow: 2,
+              border: "none",
               backgroundColor: "#181818",
-              color: "#f7931a",
-            },
-            "& .MuiDataGrid-selectedRowCount": {
-              color: "#ffffff",
-              fontWeight: "bold",
-            },
-            "& .MuiDataGrid-row.Mui-selected": {
-              backgroundColor: "#faa31a !important",
-              color: "#181818 !important",
-            },
-            "& .MuiDataGrid-row.Mui-selected:hover": {
-              backgroundColor: "#ffa940 !important",
-              color: "#181818 !important",
-            },
-            "& .MuiDataGrid-toolbarContainer button, & .MuiDataGrid-toolbarContainer svg":
-              {
-                color: "#ffffff",
+              color: "#fff",
+              "& .MuiDataGrid-columnHeaders, & .MuiDataGrid-columnHeaderRow, & .MuiDataGrid-columnHeader, & .MuiDataGrid-columnHeaderTitle":
+                {
+                  backgroundColor: "#f7931a !important",
+                  color: "#fff !important",
+                  fontSize: 22,
+                  fontWeight: "bold",
+                  whiteSpace: "nowrap",
+                  overflow: "visible",
+                  textOverflow: "unset",
+                },
+              "& .MuiDataGrid-filler": {
+                backgroundColor: "#f7931a",
+                color: "#fff",
               },
-          }}
-        />
+              "& .MuiDataGrid-row:nth-of-type(even)": {
+                backgroundColor: "#222",
+              },
+              "& .MuiDataGrid-row:hover": {
+                backgroundColor: "#333",
+                transition: "background 0.2s",
+              },
+              "& .MuiDataGrid-cell": {
+                fontSize: 16,
+                color: "#fff",
+              },
+              "& .MuiDataGrid-footerContainer": {
+                backgroundColor: "#f7931a",
+                color: "#181818",
+                borderBottomLeftRadius: 8,
+                borderBottomRightRadius: 8,
+              },
+              "& .MuiDataGrid-toolbarContainer": {
+                backgroundColor: "#181818",
+                color: "#f7931a",
+              },
+              "& .MuiDataGrid-selectedRowCount": {
+                color: "#ffffff",
+                fontWeight: "bold",
+              },
+              "& .MuiDataGrid-row.Mui-selected": {
+                backgroundColor: "#faa31a !important",
+                color: "#181818 !important",
+              },
+              "& .MuiDataGrid-row.Mui-selected:hover": {
+                backgroundColor: "#ffa940 !important",
+                color: "#181818 !important",
+              },
+              "& .MuiDataGrid-toolbarContainer button, & .MuiDataGrid-toolbarContainer svg":
+                {
+                  color: "#ffffff",
+                },
+            }}
+          />
+        </Box>
       </Paper>
     </div>
   );
