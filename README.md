@@ -4,6 +4,10 @@ _A modern, multi-user Bitcoin DCA (Dollar Cost Averaging) tracker. Log your recu
 
 ---
 
+## Why Bitcoin DCA Tracker?
+Dollar Cost Averaging (DCA) is your stealthy rebellion against the tyranny of market volatility—buying Bitcoin bit by bit, like a true free-market warrior dodging the central banks’ chaos. This app is your trusty ledger in the war against fiat inflation, making it stupid-simple to track your recurring BTC buys, calculate your average cost basis, and spy on your portfolio’s glorious ascent. Whether you’re a fresh cypherpunk or a battle-hardened HODLer, Bitcoin DCA Tracker arms you with the data to stick it to the system and keep your crypto stash growing.
+
+---
 ## Features
 
 - 📈 **DCA & HODL Tracking:** Log your Bitcoin purchases and see your average cost, total holdings, and portfolio value.
@@ -18,8 +22,7 @@ _A modern, multi-user Bitcoin DCA (Dollar Cost Averaging) tracker. Log your recu
 
 ## Screenshots
 
-<!-- Add screenshots here if you have them -->
-<!-- ![Dashboard Screenshot](screenshots/dashboard.png) -->
+![Dashboard Screenshot](media/dashboard.png)![Graphs Screenshot](media/graphs.png)
 
 ---
 
@@ -35,8 +38,8 @@ _A modern, multi-user Bitcoin DCA (Dollar Cost Averaging) tracker. Log your recu
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/yourusername/btc-dca-tracker.git
-   cd btc-dca-tracker
+   git clone https://github.com/mateuspim/bitcoin-hodl.git
+   cd bitcoin-hodl
    ```
 
 2. **Copy and edit environment variables:**
@@ -63,7 +66,7 @@ _A modern, multi-user Bitcoin DCA (Dollar Cost Averaging) tracker. Log your recu
 
 1. **Register a new account.**
 2. **Log in to your dashboard.**
-3. **Add your BTC purchases (DCA or one-time).**
+3. **Add your BTC purchases**
 4. **View your average cost, total holdings, and portfolio value.**
 5. **Reset your password if needed.**
 
@@ -144,5 +147,14 @@ Feel free to [open an issue](https://github.com/mateuspim/bitcoin-hodl/issues) o
 - [FastAPI Users](https://fastapi-users.github.io/fastapi-users/latest/)
 
 ---
+
+## Support & Contact
+
+Need help or want to share feedback? Reach out via:
+
+- GitHub Issues: [https://github.com/mateuspim/bitcoin-hodl/issues](https://github.com/mateuspim/bitcoin-hodl/issues)
+- Email: mateuspimsantos@gmail.com
+
+We appreciate your support and contributions!
 
 **Happy HODLING! 🚀**
