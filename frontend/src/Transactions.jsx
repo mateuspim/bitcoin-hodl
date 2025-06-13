@@ -261,7 +261,7 @@ function TransactionsTable({
           borderRadius: 4,
           fontFamily: "'Inter', 'Roboto', 'Arial', sans-serif",
           boxShadow: "0 4px 24px 0 rgba(0,0,0,0.4)",
-          maxWidth: 1200,
+          maxWidth: 2000,
           margin: "0 auto",
         }}
       >
