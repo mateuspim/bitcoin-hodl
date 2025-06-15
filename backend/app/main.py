@@ -25,7 +25,7 @@ app = FastAPI(
 
 # CORS settings for local React dev server
 origins = [
-    "http://localhost:3001",  # React dev server
+    "http://localhost:3000",  # React dev server
     # Add your production frontend URL here later
 ]
 
