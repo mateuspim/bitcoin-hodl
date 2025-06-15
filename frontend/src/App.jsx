@@ -376,8 +376,6 @@ function App() {
       </Paper>
     </Box>
   );
-
-  // Note: fetchTransactions, fetchTransactionsSummary, fetchUser, getBitcoinPrice, handleLogout are declared above
 }
 
 export default App;
