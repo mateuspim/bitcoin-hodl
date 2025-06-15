@@ -160,6 +160,7 @@ function TransactionsTable({
         )
       );
       await fetchTransactions();
+      await fetchTransactionsSummary();
       setSelectedIds([]);
     } catch (error) {
       alert("Failed to delete one or more transactions.");
