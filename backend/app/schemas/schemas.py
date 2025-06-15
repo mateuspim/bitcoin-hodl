@@ -27,7 +27,7 @@ class TransactionRead(TransactionBase):
         return cls(**data)
     
     class Config:
-        orm_mode = True
+        from_attributes = True
         
 class TransactionSummary(BaseModel):
     total_usd_spent: Decimal | None
