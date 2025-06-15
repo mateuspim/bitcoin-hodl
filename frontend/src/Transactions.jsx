@@ -63,7 +63,9 @@ function TransactionsTable({
       headerName: "BTC Value Today",
       flex: 1,
       valueGetter: (value, row) =>
-        `${Number(row.btc_bought * bitcoinPrice).toLocaleString()} ${currency.toUpperCase()}`,
+        `${Number(
+          row.btc_bought * bitcoinPrice
+        ).toLocaleString()} ${currency.toUpperCase()}`,
     },
   ];
 
@@ -108,7 +110,7 @@ function TransactionsTable({
           minHeight: 56,
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Box sx={{ flexWrap: "wrap", display: "flex", alignItems: "center" }}>
           <img
             src="https://cdn.jsdelivr.net/gh/selfhst/icons/png/bitcoin.png"
             alt="Bitcoin"
@@ -126,7 +128,7 @@ function TransactionsTable({
             Bitcoin Portfolio
           </Typography>
         </Box>
-        <Box sx={{ display: "flex", gap: 1 }}>
+        <Box sx={{ flexWrap: "wrap", display: "flex", gap: 1 }}>
           <GridToolbarColumnsButton sx={{ color: "#f7931a" }} />
           <GridToolbarFilterButton sx={{ color: "#f7931a" }} />
           <GridToolbarDensitySelector sx={{ color: "#f7931a" }} />
@@ -271,6 +273,7 @@ function TransactionsTable({
         <Box
           sx={{
             display: "flex",
+            flexWrap: "wrap",
             justifyContent: "space-between",
             alignItems: "center",
             mb: 2,
@@ -373,6 +376,7 @@ function TransactionsTable({
             borderRadius: 2,
             mb: 2,
             boxShadow: 1,
+            flexWrap: "wrap",
           }}
         >
           <span>Total USD Spent: ${sumUsdSpent.toFixed(2)}</span>
@@ -398,7 +402,7 @@ function TransactionsTable({
           </span>
         </Box>
 
-        <Box sx={{ width: "100%", height: 1500 }}>
+        <Box sx={{ flexWrap: "wrap", width: "100%", height: 1500 }}>
           <DataGrid
             rows={rows}
             columns={columns}
