@@ -17,6 +17,7 @@ import {
   Paper,
   Typography,
   Box,
+  Chip,
 } from "@mui/material";
 
 function TransactionsTable({
@@ -251,6 +252,14 @@ function TransactionsTable({
     }
   };
 
+  const formatValue = (value, decimalPlaces = 2) =>
+    value.toLocaleString(undefined, {
+      minimumFractionDigits: decimalPlaces,
+      maximumFractionDigits: decimalPlaces,
+    });
+
+  const formatPercent = (value) => `${value.toFixed(2)}%`;
+
   return (
     <div
       style={{
@@ -377,29 +386,79 @@ function TransactionsTable({
             mb: 2,
             boxShadow: 1,
             flexWrap: "wrap",
+            gap: 1,
           }}
         >
-          <span>Total USD Spent: ${sumUsdSpent.toFixed(2)}</span>
-          <span>Avg BTC Price: ${avgBtcPrice.toFixed(2)}</span>
-          <span>Total BTC Bought: ₿ {totalBtcBought.toFixed(8)}</span>
-          <span>
-            Sum of Today's Value: $
-            {sumBtcValueToday.toLocaleString(undefined, {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
-          </span>
-          <span>
-            Gain/Loss:{" "}
-            <span style={{ color: gainOrLoss >= 0 ? "#4caf50" : "#f44336" }}>
-              $
-              {gainOrLoss.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}{" "}
-              ({gainOrLossPercent.toFixed(2)}%)
-            </span>
-          </span>
+          <Box>
+            <Typography
+              variant="h6"
+              sx={{ marginBottom: 1, fontWeight: "bold" }}
+            >
+              Key Metrics
+            </Typography>
+            <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                <Typography variant="body2" sx={{ color: "#999999" }}>
+                  Total USD Spent
+                </Typography>
+                <Typography variant="body1">
+                  <span>${formatValue(sumUsdSpent)}</span>
+                </Typography>
+              </Box>
+
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                <Typography variant="body2" sx={{ color: "#999999" }}>
+                  Avg BTC Price
+                </Typography>
+                <Typography variant="body1">
+                  <span>${formatValue(avgBtcPrice)}</span>
+                </Typography>
+              </Box>
+
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                <Typography variant="body2" sx={{ color: "#999999" }}>
+                  Total BTC Bought
+                </Typography>
+                <Typography variant="body1">
+                  <span>₿ {formatValue(totalBtcBought, 8)}</span>
+                </Typography>
+              </Box>
+
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                <Typography variant="body2" sx={{ color: "#999999" }}>
+                  Sum of Today's Value
+                </Typography>
+                <Typography variant="body1">
+                  <span>${formatValue(sumBtcValueToday)}</span>
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+
+          {/* Group 2: Gain/Loss */}
+          <Box>
+            <Typography
+              variant="h6"
+              sx={{ marginBottom: 1, fontWeight: "bold" }}
+            >
+              Performance
+            </Typography>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Typography variant="body2" sx={{ color: "#999999" }}>
+                Gain/Loss:
+              </Typography>
+              <Chip
+                label={`${formatValue(gainOrLoss)} (${formatPercent(
+                  gainOrLossPercent
+                )})`}
+                sx={{
+                  backgroundColor: gainOrLoss >= 0 ? "#e8f5e9" : "#f8bbd0",
+                  color: gainOrLoss >= 0 ? "#2e7d32" : "#c62828",
+                  fontWeight: "bold",
+                }}
+              />
+            </Box>
+          </Box>
         </Box>
 
         <Box sx={{ flexWrap: "wrap", width: "100%", height: 1500 }}>
