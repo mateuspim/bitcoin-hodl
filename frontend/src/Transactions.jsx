@@ -23,6 +23,7 @@ function TransactionsTable({
   transactions,
   transactionsSummary,
   fetchTransactions,
+  fetchTransactionsSummary,
   currency,
   bitcoinPrice,
 }) {
@@ -233,6 +234,7 @@ function TransactionsTable({
       }
 
       await fetchTransactions();
+      await fetchTransactionsSummary();
       setOpen(false);
       setForm({
         date: "",

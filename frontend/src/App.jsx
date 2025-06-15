@@ -342,6 +342,7 @@ function App() {
             transactions={transactions}
             transactionsSummary={transactionsSummary}
             fetchTransactions={fetchTransactions}
+            fetchTransactionsSummary={fetchTransactionsSummary}
             currency={currency}
             bitcoinPrice={effectiveBitcoinPrice}
           />
