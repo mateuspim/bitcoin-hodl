@@ -7,6 +7,10 @@ from app.schemas import TransactionCreate, TransactionRead, TransactionSummary
 from app.auth.users import current_active_user
 from app.models import User
 from decimal import Decimal
+from fastapi import UploadFile, File
+import csv
+from io import StringIO
+from datetime import datetime
 
 router = APIRouter(
     prefix="/transactions",
@@ -79,3 +83,48 @@ async def delete_transaction(
     await session.delete(transaction)
     await session.commit()
     return transaction
+
+@router.post("/import_csv", response_model=list[TransactionRead])
+async def import_transactions_csv(
+    file: UploadFile = File(...),
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_active_user),
+):
+    content = await file.read()
+    decoded = content.decode("utf-8")
+    reader = csv.DictReader(StringIO(decoded))
+    created_transactions = []
+
+    for row in reader:
+        try:
+            date = datetime.strptime(row["Date"], "%Y-%m-%d").date()
+            usd_spent = Decimal(row["USD Spent"].replace("$", "").replace(",", "").strip())
+            btc_price = Decimal(row["BTC Price in USD"].replace("$", "").replace(",", "").strip())
+            btc_bought = Decimal(row["BTC Bought"].replace("₿", "").replace(",", "").strip()) * Decimal("100000000")  # Convert to satoshis
+        except Exception as e:
+            continue  # skip malformed rows
+
+        # Check if transaction for this date and user exists
+        result = await session.execute(
+            select(Transaction).where(Transaction.user_id == user.id, Transaction.date == date)
+        )
+        transaction = result.scalars().first()
+        if transaction:
+            transaction.usd_spent = usd_spent # type: ignore
+            transaction.btc_price = btc_price # type: ignore
+            transaction.btc_bought = btc_bought # type: ignore
+        else:
+            transaction = Transaction(
+                user_id=user.id,
+                date=date,
+                usd_spent=usd_spent,
+                btc_price=btc_price,
+                btc_bought=btc_bought,
+            )
+            session.add(transaction)
+        await session.flush()
+        await session.refresh(transaction)
+        created_transactions.append(TransactionRead.from_orm(transaction))
+
+    await session.commit()
+    return created_transactions

@@ -286,6 +286,7 @@ function TransactionsTable({
             justifyContent: "space-between",
             alignItems: "center",
             mb: 2,
+            gap: 2,
           }}
         >
           <Typography
@@ -299,14 +300,58 @@ function TransactionsTable({
           >
             Bitcoin Portfolio
           </Typography>
-          <Button
-            variant="contained"
-            color="warning"
-            sx={{ fontWeight: "bold", borderRadius: 2, boxShadow: 2 }}
-            onClick={handleOpen}
-          >
-            Create Transaction
-          </Button>
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <Button
+              variant="contained"
+              color="warning"
+              sx={{ fontWeight: "bold", borderRadius: 2, boxShadow: 2 }}
+              onClick={handleOpen}
+            >
+              Create Transaction
+            </Button>
+            {/* CSV Upload Button */}
+            <Button
+              variant="contained"
+              color="primary"
+              component="label"
+              sx={{ fontWeight: "bold", borderRadius: 2, boxShadow: 2 }}
+            >
+              Import CSV
+              <input
+                type="file"
+                accept=".csv"
+                hidden
+                onChange={async (e) => {
+                  const file = e.target.files[0];
+                  if (!file) return;
+                  const formData = new FormData();
+                  formData.append("file", file);
+                  try {
+                    const res = await fetch("http://localhost:8000/transactions/import_csv", {
+                      method: "POST",
+                      headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                      },
+                      body: formData,
+                    });
+                    if (!res.ok) {
+                      const errorData = await res.json();
+                      alert("Failed to import CSV: " + JSON.stringify(errorData));
+                      return;
+                    }
+                    await fetchTransactions();
+                    await fetchTransactionsSummary();
+                    alert("CSV imported successfully!");
+                  } catch (error) {
+                    alert("Failed to import CSV.");
+                    console.error(error);
+                  }
+                  // Reset input so user can upload the same file again if needed
+                  e.target.value = "";
+                }}
+              />
+            </Button>
+          </Box>
         </Box>
 
         <Dialog
